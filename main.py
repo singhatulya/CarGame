@@ -2,19 +2,45 @@ import pygame
 
 pygame.init()
 
+clock = pygame.time.Clock()
+
+v = 0
+ease = 0.1
+max = 5
+target = 0
+
 screen = pygame.display.set_mode((1280, 720))
 running = True
+carx = 640
+cary = 600
+car1 = pygame.image.load("car1.png")
+car1 = pygame.transform.scale(car1, (50,100))
+
 while running:
+    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-    car1 = pygame.image.load("car1.png")
-    car1 = pygame.transform.scale(car1, (50,100))
-    carx = 640
-    cary = 360
-    screen.fill((0,255,50))
+    
+    
+    screen.fill((0,150,50))
+
+    key = pygame.key.get_pressed()
+    if key[pygame.K_LEFT] or key[pygame.K_a]:
+        target = -max
+    elif key[pygame.K_RIGHT] or key[pygame.K_d]:
+        target = max
+    else:
+        target = 0
+
+    v += (target - v) * ease
+    carx += v
+    
 
     screen.blit(car1, (carx,cary))
-    pygame.display.update()
+    pygame.display.flip()
+    
+    clock.tick(75)
 
 pygame.quit()
+

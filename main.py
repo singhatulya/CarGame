@@ -6,7 +6,7 @@ clock = pygame.time.Clock()
 
 v = 0
 ease = 0.1
-max = 5
+maximum = 5
 target = 0
 
 screen = pygame.display.set_mode((1280, 720))
@@ -24,19 +24,20 @@ while running:
             running = False
     
     
-    screen.blit(bg, (0,0))
+    screen.blit(bg, (0,-90))
 
     key = pygame.key.get_pressed()
     if key[pygame.K_LEFT] or key[pygame.K_a]:
-        target = -max
+        target = -maximum
     elif key[pygame.K_RIGHT] or key[pygame.K_d]:
-        target = max
+        target = maximum
     else:
         target = 0
 
     v += (target - v) * ease
     carx += v
     
+    carx = max(480, min(carx, 750))
 
     screen.blit(car1, (carx,cary))
     pygame.display.flip()

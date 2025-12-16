@@ -1,3 +1,7 @@
+#Car Game made by Atulya.
+#______________________
+
+#Import required modules.
 import pygame
 import random
 import time
@@ -14,6 +18,7 @@ ease = 0.1
 maximum = 5
 target = 0
 score = 0
+
 over = False
 msg = "Move Left and Right using Arrow Keys."
 
@@ -37,35 +42,46 @@ minx = 500
 #---------------------
 
 car2 = pygame.image.load("car2.png")
+speed = pygame.image.load("speed.png")
+highimage = pygame.image.load("high.png")
 car2 = pygame.transform.scale(car2, (50,100))
+speed = pygame.transform.scale(speed, (60,30))
+highimage = pygame.transform.scale(highimage, (60,60))
 
 
 
 bg = pygame.image.load("bg.png").convert()
 bgy = 0
 scroll = 8
+speedi = scroll*5
 carscroll = 3
+rate = 0.125
 
 car2_rect = car2.get_rect()
 car2_rect.y = random.randint(miny, 50)
 car2_rect.x = random.randint(minx, maxx)
 
+#All the font things...
 font = pygame.font.Font("Tomorrow-Regular.ttf", 50)
 scoret = pygame.font.Font("Tomorrow-Regular.ttf", 30)
 txt = pygame.font.Font("Tomorrow-Regular.ttf", 20)
+speedf = pygame.font.Font("Tomorrow-Regular.ttf", 30)
+
 
 def reset_game():
     global carx, v, score, over, msg, scoretime
     global car2_rect, scroll, carscroll, maximum
+    global speedi
 
     carx = 640
     v = 0
-    score = 0
+    score = score
     over = False 
     msg = "Move Left and Right using Arrow Keys."
 
-    scroll = 8 + score // 5
-    carscroll = 3 + score // 55
+    scroll = 8 
+    speedi = scroll*5
+    carscroll = 3
     maximum = 5
 
     car2_rect.y = random.randint(miny, 50)
@@ -83,10 +99,10 @@ else:
     highscore = 0
 
 while running:
-        
     text = font.render("Intense Car Game", True, (0,100,0))
     score_text = scoret.render(f"Score: {score}", True, (0, 20, 0))
     txtm = txt.render(msg, True, (0,0,0))
+    speedt = speedf.render(f"{speedi}", True,(0, 20, 0))
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -95,14 +111,16 @@ while running:
     if not over:
         scroll = 8 + score // 250
         carscroll = 3 + score // 200
-
+        rate = 0.125 - 0.02*(score // 200)
+        speedi  = int(5*scroll)
 
     bgy += scroll
     car2_rect.y += carscroll
 
     current_time = time.time()
+    
 
-    if not over and current_time - scoretime >= 0.125:
+    if not over and current_time - scoretime >= rate:
         score += 1
         scoretime = current_time
 
@@ -120,10 +138,12 @@ while running:
     
     if car2_rect.colliderect(car1_rect) and not over:
         scroll = 0
+        speedi = 0
         carscroll = 0
         maximum = 0
         over = True
         msg = "Game Over! Press R to Restart."
+
 
         if score > highscore:
             highscore = score
@@ -131,6 +151,7 @@ while running:
                 f.write(str(highscore))
 
     key = pygame.key.get_pressed()
+    high_text = scoret.render(f"High Score: {highscore}", True, (0, 20, 0))
     if key[pygame.K_LEFT] or key[pygame.K_a]:
         target = -maximum
     elif key[pygame.K_RIGHT] or key[pygame.K_d]:
@@ -148,7 +169,7 @@ while running:
     carx = max(490, min(carx, 730))
 
     
-
+    #Rendering the whole game.
     screen.blit(bg, (0,bgy))
     screen.blit(bg, (0,bgy-720))
     screen.blit(car2, car2_rect)
@@ -156,8 +177,10 @@ while running:
     screen.blit(score_text, (20, 100))
     screen.blit(car1, (carx,cary))
     screen.blit(txtm, (20, 140))
-    high_text = scoret.render(f"High Score: {highscore}", True, (0, 20, 0))
-    screen.blit(high_text, (20, 170))
+    screen.blit(speed, (1130, 20))
+    screen.blit(high_text, (80, 180))
+    screen.blit(speedt, (1200, 20))
+    screen.blit(highimage, (20,170))
 
     
     pygame.display.flip()

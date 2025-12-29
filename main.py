@@ -75,7 +75,7 @@ def reset_game():
 
     carx = 640
     v = 0
-    score = score
+    score = 0
     over = False 
     msg = "Move Left and Right using Arrow Keys."
 
@@ -188,3 +188,4 @@ while running:
     clock.tick(75)
 
 pygame.quit()
+
